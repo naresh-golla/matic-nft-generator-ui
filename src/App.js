@@ -284,6 +284,7 @@ const App = () => {
         console.log("record set https://mumbai.polygonscan.com/tx/"+tx.hash)
 
         fetchMints();
+        setEditing(false)
         setInputF({
           domain:"",
           record:""
