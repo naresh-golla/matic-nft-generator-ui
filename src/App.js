@@ -14,7 +14,7 @@ import Confetti from "./components/Confetti"
 import ModalComponent from "./components/ModalComponent"
 
 // Constants
-const CONTRACT_ADDRESS = "0x0997376B93BC8102Ba72b8482C3A81F870C5737e"
+const CONTRACT_ADDRESS = "0x0aeb9a850397c1e2b2ecb5d080b865d259d7b10b"
 const tld = '.matic';
 
 const App = () => {
