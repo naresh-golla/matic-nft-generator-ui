@@ -181,7 +181,7 @@ const App = () => {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
       console.log("Going to pop wallet now to pay gas...")
-      let tx = await contract.registers(domain,{value:ethers.utils.parseEther(price)})
+      let tx = await contract.register(domain,{value:ethers.utils.parseEther(price)})
       const recipt = await tx.wait();
       if(recipt.status === 1){
         console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
