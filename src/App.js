@@ -335,7 +335,7 @@ const renderMints = () => {
   console.log("isAddrHasNft",isAddrHasNft)
     return(
       <div className="mint-container">     
-      {isAddrHasNft && <p className="subtitle">Your Recently minted domains! ✨</p>}
+      {isAddrHasNft && isAddrHasNft.length > 0 && <p className="subtitle">Your Recently minted domains! ✨</p>}
       <div className="mint-list">  
       {
         mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() === currentAccount.toLowerCase()).map((mint, index) =>{
