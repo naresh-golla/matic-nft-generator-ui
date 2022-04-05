@@ -14,7 +14,7 @@ import Confetti from "./components/Confetti"
 import ModalComponent from "./components/ModalComponent"
 
 // Constants
-const CONTRACT_ADDRESS = "0x0aeb9a850397c1e2b2ecb5d080b865d259d7b10b"
+const CONTRACT_ADDRESS = "0x81cf795Db78EEBD66B0322f1f25761A3C18E701e"
 const tld = '.matic';
 
 const App = () => {
@@ -28,6 +28,7 @@ const App = () => {
   const [confetti, setConfetti] = useState(false);
   const [loading, setLoading] = useState(false);
   const [network, setNetwork] = useState('');
+  const [price, setPrice] = useState("0");
   const [editing, setEditing] = useState(false);
   const [currentAccount, setCurrentAccount] = useState('');
   const [inputF, setInputF] = useState({
@@ -37,6 +38,19 @@ const App = () => {
   
   const handler = (e) =>{
     const {value,name} = e.target;
+    if(name === "domain"){
+      if(value.length < 3){
+        setPrice("0")
+      }else if(value.length === 3){
+        setPrice("10")
+      }else if(value.length === 4){
+        setPrice("5")
+      }else if(value.length === 5){
+        setPrice("3")
+      }else if(value.length > 5){
+        setPrice("1")
+      }
+    }
     setInputF((prevState)=>({
       ...prevState,
       [name]:value
@@ -102,6 +116,7 @@ const App = () => {
   const notConnectedBlock = ()=>(
     <div className="connect-wallet-container">
       <img height="300" src="https://miro.medium.com/max/1000/1*r9qPeukYyZSvr6Tsn6qvcQ.gif" />
+      {/* <img height="300" src="./assets/polygif.gif" /> */}
       <button className="cta-button connect-wallet-button" onClick={connectWallet}>
         Connect Wallet
       </button>
@@ -109,10 +124,10 @@ const App = () => {
   )
 
   const renderInputForm = ()=>{
-    if(network !== "Polygon Mumbai Testnet"){
+    if(network !== "Polygon Mainnet"){
         return (
             <div className="connect-wallet-container">
-              <h2>Please switch to Polygon Mumbai Testnet</h2>
+              <h2>Please switch to Polygon Mainnet</h2>
               {/* This button will call our switch network function */}
               <button className='cta-button mint-button' onClick={switchNetwork}>Click here to switch</button>
             </div>
@@ -124,8 +139,9 @@ const App = () => {
               <Input value={inputF.domain} name="domain" placeholder="domain" action={handler} />
               <p className='tld'> {tld} </p>
               </div>
-              <Input value={inputF.record} name="record" placeholder="record" action={handler} />
               
+              <Input value={inputF.record} name="record" placeholder="record" action={handler} />
+              {price > 0 && `price : ${price} Matic`}
 
               {editing ? (
                 <div className="button-container">
@@ -156,7 +172,7 @@ const App = () => {
   },[inputF])
 
   useEffect(() => {
-    if (network === 'Polygon Mumbai Testnet') {
+    if (network === 'Polygon Mainnet') {
       fetchMints();
     }
   }, [currentAccount, network]);
@@ -172,8 +188,9 @@ const App = () => {
       alert("domain name must be atleast 3 charecters long");
       return
     }
-    const price = domain.length === 3 ? "0.5" : domain.length === 4 ? "0.3" : "0.1";
-    console.log("Minting Domain ", inputF.domain, "with price", price);
+    // const price = domain.length === 3 ? "0.5" : domain.length === 4 ? "0.3" : "0.1";
+    const price_ = price
+    console.log("Minting Domain ", inputF.domain, "with price", price_);
 
     try {
       setLoading(true);
@@ -181,13 +198,13 @@ const App = () => {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
       console.log("Going to pop wallet now to pay gas...")
-      let tx = await contract.register(domain,{value:ethers.utils.parseEther(price)})
+      let tx = await contract.registers(domain,{value:ethers.utils.parseEther(price_)})
       const recipt = await tx.wait();
       if(recipt.status === 1){
-        console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
+        console.log("Domain minted! https://polygonscan.com/tx/"+tx.hash);
         tx = await contract.setRecord(domain, record);
         await tx.wait();
-        console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
+        console.log("Record set! https://polygonscan.com/tx/"+tx.hash);
         const reciptArgs = recipt.events && recipt.events[1].args &&  recipt.events[1].args[2];
         const tokenId = parseInt(reciptArgs._hex);
         setLoading(false);
@@ -229,7 +246,7 @@ const App = () => {
           // Try to switch to the Mumbai testnet
           await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: '0x13881' }], // Check networks.js for hexadecimal network ids
+            params: [{ chainId: '0x89' }], // Check networks.js for hexadecimal network ids
           });
         } catch (error) {
           // This error code means that the chain we want has not been added to MetaMask
@@ -240,15 +257,15 @@ const App = () => {
                 method: 'wallet_addEthereumChain',
                 params: [
                   {	
-                    chainId: '0x13881',
-                    chainName: 'Polygon Mumbai Testnet',
-                    rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+                    chainId: '0x89',
+                    chainName: 'Polygon Mainnet',
+                    rpcUrls: ['https://polygon-rpc.com/'],
                     nativeCurrency: {
-                        name: "Mumbai Matic",
+                        name: "Matic",
                         symbol: "MATIC",
                         decimals: 18
                     },
-                    blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
+                    blockExplorerUrls: ["https://polygonscan.com/"]
                   },
                 ],
               });
@@ -281,7 +298,8 @@ const App = () => {
 
         let tx = await contract.setRecord(domain,record)
         await tx.wait();
-        console.log("record set https://mumbai.polygonscan.com/tx/"+tx.hash)
+        // console.log("record set https://mumbai.polygonscan.com/tx/"+tx.hash)
+        console.log("record set https://polygonscan.com/tx/"+tx.hash)
 
         fetchMints();
         setEditing(false)
@@ -343,7 +361,8 @@ const renderMints = () => {
           return (
               <div className="mint-item" key={index}>
                   <div className='mint-row'>
-                    <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
+                    {/* <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer"> */}
+                    <a className="link" href={`https://opensea.io/assets/matic/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
                       <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
                     </a>
                     {/* If mint.owner is currentAccount, add an "edit" button*/}
@@ -365,7 +384,7 @@ const renderMints = () => {
           return (
               <div className="mint-item" key={index}>
                   <div className='mint-row'>
-                    <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
+                    <a className="link" href={`https://opensea.io/assets/matic/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
                       <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
                     </a>
                   </div>

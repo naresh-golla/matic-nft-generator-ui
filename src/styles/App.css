@@ -1,6 +1,11 @@
 iframe{
   display:none
 }
+ul{
+  padding-inline-start: 0px !important;
+  margin-block-start: 0em !important;
+  margin-block-end: 0em !important;
+}
 .App,body {
   background-color: #59acd9;
   height: 100%;
@@ -21,7 +26,7 @@ p {
 }
 
 .header-container {
-  padding-top: 30px;
+  padding-top: 10px;
 }
 
 header{
@@ -376,6 +381,7 @@ body {
 .connect-wallet-container button{
   margin-top: 35px;
 }
+
 }
 
 @media screen and (max-width:2924px){
@@ -420,7 +426,10 @@ body {
   .link, .mint-item p{
     color: #152c06d9;
     font-weight: 400;
-    font-size: 22px;
+    font-size: 14px;
+  }
+  .link, .mint-item a>p{
+    font-size: 20px;
   }
   .mint-item{
     background-image: linear-gradient( 336deg, #59acd9 11.2%, rgb(128 255 221 / 50%) 57.8%, rgb(165 0 255 / 20%) 85.9% );

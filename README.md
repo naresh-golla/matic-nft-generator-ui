@@ -1,1 +1,1 @@
-# matic-domains-ui
+# matic-nft-generator
