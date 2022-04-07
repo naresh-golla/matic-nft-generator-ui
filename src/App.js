@@ -316,7 +316,7 @@ const App = () => {
   }
 
   const fetchMints = async () => {
-        setLoading(true)
+        // setLoading(true)
     try {
       console.log("fetch MINTS---------")
       const { ethereum } = window;
@@ -339,13 +339,13 @@ const App = () => {
         }));
     console.log("MINTS FETCHED ", mintRecords);
 		setMints(mintRecords);
-    setLoading(false)
+    // setLoading(false)
       }
     } catch (error) {
       console.log("fetch mints error", error);
-          setLoading(false)
+          // setLoading(false)
     }
-        setLoading(false)
+        // setLoading(false)
   }
 
 const renderMints = () => {
